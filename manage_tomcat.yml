@@ -4,10 +4,28 @@
   become: yes
   connection: local
   tasks:
-    - name: Start Tomcat
+    - name: Ensure Tomcat is installed
+      package:
+        name: tomcat
+        state: present
+
+    - name: Check if Tomcat is running
       systemd:
         name: tomcat
         state: started
+      register: tomcat_status
+      ignore_errors: yes  # Ignore errors in case the service isn't found
+
+    - name: Debug Tomcat status
+      debug:
+        var: tomcat_status
+
+    - name: Start Tomcat if not running
+      systemd:
+        name: tomcat
+        state: started
+      when: tomcat_status is not defined or tomcat_status.changed
+
     - name: Stop Tomcat
       systemd:
         name: tomcat
