@@ -6,25 +6,21 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
-    - name: Ensure the correct package manager is available
-      raw: |
-        if ! command -v apt-get &> /dev/null; then
-          echo "This playbook requires a Debian-based system."
-          exit 1
-        fi
+    - name: Gather facts
+      setup:
 
-    - name: Ensure python3-apt is installed
-      apt:
-        name: python3-apt
+    - name: Ensure dependencies are installed
+      package:
+        name: 
+          - python3-apt
         state: present
-        update_cache: yes
-      become: yes
-
+      when: ansible_os_family == 'Debian'
+      
     - name: Ensure Tomcat is installed
-      apt:
-        name: tomcat9
+      package:
+        name: 
+          - tomcat9
         state: present
-        update_cache: no
       become: yes
 
     - name: Start Tomcat
