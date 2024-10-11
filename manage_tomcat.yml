@@ -4,40 +4,24 @@
   become: yes
   connection: local
   tasks:
-    - name: Check internet connectivity
-      command: ping -c 1 google.com
-      register: ping_result
-      failed_when: ping_result.rc != 0
-
-    - name: Gather facts
-      setup:
-
-    - name: Ensure dependencies are installed
+    - name: Ensure Java is installed
       package:
-        name: 
-          - python3-apt
+        name: java-1.8.0-openjdk
         state: present
-      when: ansible_os_family == 'Debian'
-      
-    - name: Ensure Tomcat is installed
-      package:
-        name: 
-          - tomcat9
-        state: present
-      become: yes
+
+    - name: Download Tomcat
+      get_url:
+        url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.62/bin/apache-tomcat-9.0.62.tar.gz
+        dest: /tmp/apache-tomcat-9.0.62.tar.gz
+
+    - name: Extract Tomcat
+      unarchive:
+        src: /tmp/apache-tomcat-9.0.62.tar.gz
+        dest: /opt/
+        remote_src: yes
 
     - name: Start Tomcat
-      systemd:
-        name: tomcat9
-        state: started
-      register: tomcat_start_status
-
-    - name: Debug Tomcat start status
-      debug:
-        var: tomcat_start_status
+      command: /opt/apache-tomcat-9.0.62/bin/startup.sh
 
     - name: Stop Tomcat
-      systemd:
-        name: tomcat9
-        state: stopped
-      become: yes
+      command: /opt/apache-tomcat-9.0.62/bin/shutdown.sh
