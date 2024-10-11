@@ -6,6 +6,14 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
+    - name: Ensure python3-apt is installed
+      apt:
+        name: python3-apt
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == 'Debian'
+
     - name: Ensure Tomcat is installed
       apt:
         name: tomcat9
