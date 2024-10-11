@@ -5,28 +5,21 @@
   connection: local
   tasks:
     - name: Ensure Tomcat is installed
-      package:
-        name: tomcat
+      apt:
+        name: tomcat9
         state: present
 
-    - name: Check if Tomcat is running
+    - name: Start Tomcat
       systemd:
-        name: tomcat
+        name: tomcat9
         state: started
-      register: tomcat_status
-      ignore_errors: yes  # Ignore errors in case the service isn't found
+      register: tomcat_start_status
 
-    - name: Debug Tomcat status
+    - name: Debug Tomcat start status
       debug:
-        var: tomcat_status
-
-    - name: Start Tomcat if not running
-      systemd:
-        name: tomcat
-        state: started
-      when: tomcat_status is not defined or tomcat_status.changed
+        var: tomcat_start_status
 
     - name: Stop Tomcat
       systemd:
-        name: tomcat
+        name: tomcat9
         state: stopped
