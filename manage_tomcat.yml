@@ -7,21 +7,34 @@
     - name: Gather facts about the system
       setup:
 
-    - name: Check if running on a Debian-based system
-      fail:
-        msg: "This playbook requires a Debian-based system."
-      when: ansible_os_family != "Debian"
+    - name: Print the operating system information
+      debug:
+        msg: "OS: {{ ansible_distribution }} Version: {{ ansible_distribution_version }}"
 
-    - name: Ensure Java 11 is installed
+    - name: Ensure Java 11 is installed on Debian-based systems
       apt:
         name: openjdk-11-jdk
         state: present
         update_cache: yes
+      when: ansible_os_family == "Debian"
 
-    - name: Install Tomcat
+    - name: Ensure Java 11 is installed on RedHat-based systems
+      yum:
+        name: java-11-openjdk
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Install Tomcat on Debian-based systems
       apt:
         name: tomcat9
         state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install Tomcat on RedHat-based systems
+      yum:
+        name: tomcat
+        state: present
+      when: ansible_os_family == "RedHat"
 
     - name: Start Tomcat
       systemd:
