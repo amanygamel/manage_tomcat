@@ -2,6 +2,7 @@
 - name: Manage Tomcat
   hosts: localhost
   become: yes
+  connection: local
   tasks:
     - name: Check if apt is available
       command: which apt-get
