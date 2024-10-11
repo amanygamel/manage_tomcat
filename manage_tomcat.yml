@@ -16,11 +16,24 @@
       register: ping_result
       failed_when: ping_result.rc != 0
 
+    - name: Ensure Java 11 is installed on Debian-based systems
+      apt:
+        name: openjdk-11-jdk
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
     - name: Ensure Java 11 is installed on RedHat-based systems
       yum:
         name: java-11-openjdk
         state: present
       when: ansible_os_family == "RedHat"
+
+    - name: Install Tomcat on Debian-based systems
+      apt:
+        name: tomcat9
+        state: present
+      when: ansible_os_family == "Debian"
 
     - name: Install Tomcat on RedHat-based systems
       yum:
@@ -30,10 +43,10 @@
 
     - name: Start Tomcat
       systemd:
-        name: tomcat
+        name: "{{ 'tomcat' if ansible_os_family == 'RedHat' else 'tomcat9' }}"
         state: started
 
     - name: Stop Tomcat
       systemd:
-        name: tomcat
+        name: "{{ 'tomcat' if ansible_os_family == 'RedHat' else 'tomcat9' }}"
         state: stopped
