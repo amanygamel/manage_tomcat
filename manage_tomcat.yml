@@ -16,51 +16,27 @@
       register: ping_result
       ignore_errors: yes
 
-    - name: Ensure Java 11 is installed on Ubuntu
+    - name: Ensure Java 11 is installed
       apt:
         name: openjdk-11-jdk
         state: present
         update_cache: yes
       when: ansible_distribution == "Ubuntu"
 
-    - name: Ensure Java 11 is installed on CentOS
-      yum:
-        name: java-11-openjdk
-        state: present
-      when: ansible_distribution == "CentOS"
-
-    - name: Install Tomcat on Ubuntu
+    - name: Install Tomcat
       apt:
         name: tomcat9
         state: present
       when: ansible_distribution == "Ubuntu"
 
-    - name: Install Tomcat on CentOS
-      yum:
-        name: tomcat
-        state: present
-      when: ansible_distribution == "CentOS"
-
-    - name: Start Tomcat on Ubuntu
+    - name: Start Tomcat
       systemd:
         name: tomcat9
         state: started
       when: ansible_distribution == "Ubuntu"
 
-    - name: Start Tomcat on CentOS
-      systemd:
-        name: tomcat
-        state: started
-      when: ansible_distribution == "CentOS"
-
-    - name: Stop Tomcat on Ubuntu
+    - name: Stop Tomcat
       systemd:
         name: tomcat9
         state: stopped
       when: ansible_distribution == "Ubuntu"
-
-    - name: Stop Tomcat on CentOS
-      systemd:
-        name: tomcat
-        state: stopped
-      when: ansible_distribution == "CentOS"
