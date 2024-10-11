@@ -14,39 +14,53 @@
     - name: Check for network connectivity
       command: ping -c 1 google.com
       register: ping_result
-      failed_when: ping_result.rc != 0
+      ignore_errors: yes
 
-    - name: Ensure Java 11 is installed on Debian-based systems
+    - name: Ensure Java 11 is installed on Ubuntu
       apt:
         name: openjdk-11-jdk
         state: present
         update_cache: yes
-      when: ansible_os_family == "Debian"
+      when: ansible_distribution == "Ubuntu"
 
-    - name: Ensure Java 11 is installed on RedHat-based systems
+    - name: Ensure Java 11 is installed on CentOS
       yum:
         name: java-11-openjdk
         state: present
-      when: ansible_os_family == "RedHat"
+      when: ansible_distribution == "CentOS"
 
-    - name: Install Tomcat on Debian-based systems
+    - name: Install Tomcat on Ubuntu
       apt:
         name: tomcat9
         state: present
-      when: ansible_os_family == "Debian"
+      when: ansible_distribution == "Ubuntu"
 
-    - name: Install Tomcat on RedHat-based systems
+    - name: Install Tomcat on CentOS
       yum:
         name: tomcat
         state: present
-      when: ansible_os_family == "RedHat"
+      when: ansible_distribution == "CentOS"
 
-    - name: Start Tomcat
+    - name: Start Tomcat on Ubuntu
       systemd:
-        name: "{{ 'tomcat' if ansible_os_family == 'RedHat' else 'tomcat9' }}"
+        name: tomcat9
         state: started
+      when: ansible_distribution == "Ubuntu"
 
-    - name: Stop Tomcat
+    - name: Start Tomcat on CentOS
       systemd:
-        name: "{{ 'tomcat' if ansible_os_family == 'RedHat' else 'tomcat9' }}"
+        name: tomcat
+        state: started
+      when: ansible_distribution == "CentOS"
+
+    - name: Stop Tomcat on Ubuntu
+      systemd:
+        name: tomcat9
         state: stopped
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Stop Tomcat on CentOS
+      systemd:
+        name: tomcat
+        state: stopped
+      when: ansible_distribution == "CentOS"
