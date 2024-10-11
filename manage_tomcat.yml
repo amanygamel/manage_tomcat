@@ -2,7 +2,7 @@
 - name: Manage Tomcat
   hosts: localhost
   become: yes
-  connection: local  # Specify the connection type at the play level
+  connection: local
   tasks:
     - name: Ensure Java 11 is installed
       apt:
