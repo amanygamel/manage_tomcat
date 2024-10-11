@@ -11,24 +11,16 @@
       debug:
         msg: "OS: {{ ansible_distribution }} Version: {{ ansible_distribution_version }}"
 
-    - name: Ensure Java 11 is installed on Debian-based systems
-      apt:
-        name: openjdk-11-jdk
-        state: present
-        update_cache: yes
-      when: ansible_os_family == "Debian"
+    - name: Check for network connectivity
+      command: ping -c 1 google.com
+      register: ping_result
+      failed_when: ping_result.rc != 0
 
     - name: Ensure Java 11 is installed on RedHat-based systems
       yum:
         name: java-11-openjdk
         state: present
       when: ansible_os_family == "RedHat"
-
-    - name: Install Tomcat on Debian-based systems
-      apt:
-        name: tomcat9
-        state: present
-      when: ansible_os_family == "Debian"
 
     - name: Install Tomcat on RedHat-based systems
       yum:
@@ -38,10 +30,10 @@
 
     - name: Start Tomcat
       systemd:
-        name: tomcat9
+        name: tomcat
         state: started
 
     - name: Stop Tomcat
       systemd:
-        name: tomcat9
+        name: tomcat
         state: stopped
