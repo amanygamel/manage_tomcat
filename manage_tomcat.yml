@@ -4,10 +4,13 @@
   become: yes
   connection: local
   tasks:
-    - name: Check if apt is available
-      command: which apt-get
-      register: apt_check
-      failed_when: apt_check.rc != 0
+    - name: Gather facts about the system
+      setup:
+
+    - name: Check if running on a Debian-based system
+      fail:
+        msg: "This playbook requires a Debian-based system."
+      when: ansible_os_family != "Debian"
 
     - name: Ensure Java 11 is installed
       apt:
