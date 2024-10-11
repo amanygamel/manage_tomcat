@@ -1,0 +1,13 @@
+---
+- name: Manage Tomcat
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Start Tomcat
+      systemd:
+        name: tomcat
+        state: started
+    - name: Stop Tomcat
+      systemd:
+        name: tomcat
+        state: stopped
