@@ -27,3 +27,4 @@
       systemd:
         name: tomcat9
         state: stopped
+      become: yes
